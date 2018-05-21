@@ -1,11 +1,11 @@
-#Macro for ImageJ
+//Macro for ImageJ
 
-#This will sum the length of all lines selected in the ROI manager.  Really written by someone named Kees here:
+//This will sum the length of all lines selected in the  results window after being measured by the ROI manager.  
+//Really written by someone named Kees here:
+//http://imagej.1557.x6.nabble.com/summing-columns-in-ROI-manager-td5005867.html
 
-#http://imagej.1557.x6.nabble.com/summing-columns-in-ROI-manager-td5005867.html
-
-#To use, open imageJ.  Click Plugins > Macro > New
-#Copy everything below here into the text editor and save it.  Then run it by selecting that macro: Plugins > Macros > Run.
+//To use, open imageJ.  Click Plugins > Macro > New
+//Copy everything below here into the text editor and save it.  Then run it by selecting that macro: Plugins > Macros > Run.
 
 macro "Measure Cumlative Length [1]" {
 	Sum = 0; 
