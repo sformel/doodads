@@ -1,4 +1,4 @@
-####Using rsync to maintain backups and update files on Cypress (the Tulane HPC)
+#### Using rsync to maintain and update files on Cypress (the Tulane HPC)
 
 Steve got this from Erik Enbody, via Sarah Khalil
 
@@ -8,22 +8,22 @@ Installation:  rsync may already be installed on your mac or linux computer.  ch
 
 [https://explainshell.com/explain/1/rsync]()
 
-######In terminal...
+###### In terminal...
 
 Navigate to the folder you want to sync with the Cypress folder with the cd command.  Or you can set the complete local filepath below with a variable.
 
-######Set variables in terminal:
+###### Set variables in terminal:
 `cypress_filepath='/lustre/project/svanbael/steve/SF1/SF1_scripts/'
 local_filepath='./'
 `
-######if you want to see that they worked:
+###### if you want to see that they worked:
 `echo $cypress_filepath
 `
 
-######to upload to Cypress:
+###### to upload to Cypress:
 `rsync -avzPhe ssh $local_filepath sformel@cypress1.tulane.edu:$cypress_filepath
 `
 
-######to download from Cypress:
+###### to download from Cypress:
 `rsync -avzPhe ssh sformel@cypress1.tulane.edu:$cypress_filepath $local_filepath
 `
