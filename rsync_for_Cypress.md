@@ -4,7 +4,7 @@ Steve got this from Erik Enbody, via Sarah Khalil
 
 Last updated 26, Nov 2018
 
-Installation:  rsync may already be installed on your mac or linux computer.  check by typing "rsync".  If not, start googling to install it.  If you're not familiar with rsync, this is a good place to start:
+Installation:  rsync may already be installed on your mac or linux computer.  check by typing "rsync" in terminal.  If not, start googling to install it.  If you're not familiar with rsync, this is a good place to start:
 
 [https://explainshell.com/explain/1/rsync]()
 
