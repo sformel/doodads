@@ -13,17 +13,21 @@ Installation:  rsync may already be installed on your mac or linux computer.  ch
 Navigate to the folder you want to sync with the Cypress folder with the cd command.  Or you can set the complete local filepath below with a variable.
 
 ###### Set variables in terminal:
-`cypress_filepath='/lustre/project/svanbael/steve/SF1/SF1_scripts/'
+```
+cypress_filepath='/lustre/project/svanbael/steve/SF1/SF1_scripts/'
 local_filepath='./'
-`
+```
 ###### if you want to see that they worked:
-`echo $cypress_filepath
-`
+```
+echo $cypress_filepath
+```
 
 ###### to upload to Cypress:
-`rsync -avzPhe ssh $local_filepath sformel@cypress1.tulane.edu:$cypress_filepath
-`
+```
+rsync -avzPhe ssh $local_filepath sformel@cypress1.tulane.edu:$cypress_filepath
+```
 
 ###### to download from Cypress:
-`rsync -avzPhe ssh sformel@cypress1.tulane.edu:$cypress_filepath $local_filepath
-`
+```
+rsync -avzPhe ssh sformel@cypress1.tulane.edu:$cypress_filepath $local_filepath
+```
