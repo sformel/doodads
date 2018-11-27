@@ -1,4 +1,4 @@
-####To batch rename files:
+#### To batch rename files:
 Last updated: 26 Nov 2018
 
 In general if you know how to use regular expressions (regex), this will be easier to do.  But it's not totally necessary, here are some options: 

@@ -1,0 +1,75 @@
+###   Kim - You can probably ignore this 
+#Pick open reference against combined GG and Unite databases
+
+pick_open_reference_otus.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/merge.allseqs.allsamples.fna -o /Users/vanbaellab/Documents/S2_FinalAnalysis/All_seqs_all_samples_open_picked_otus_both_db -a -r /Users/vanbaellab/Documents/S2_FinalAnalysis/UNITE_and_GG/UNITE_and_GG_97_otus.fasta —-step1_otu_map_fp /Users/vanbaellab/Documents/S2_FinalAnalysis/All_seqs_all_samples_open_picked_otus_both_db/step1_otus/merge.allseqs.allsamples_otus.txt —-step1_failures_fasta_fp /Users/vanbaellab/Documents/S2_FinalAnalysis/All_seqs_all_samples_open_picked_otus_both_db/step1_otus/failures.fasta —-suppress_step4 —-suppress_taxonomy_assignment —-suppress_align_and_tree
+
+#assign tax with Unite developer file which contains untrimmed seqs, i.e. portions of LSU and SSU outisde of the ITS
+assign_taxonomy.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/All_seqs_all_samples_open_picked_otus_both_db/rep_set.fna -t /Users/vanbaellab/Documents/UNITE_sh_qiime_release_s_31.01.2016/developer/sh_taxonomy_qiime_ver7_97_s_31.01.2016_dev.txt -r /Users/vanbaellab/Documents/UNITE_sh_qiime_release_s_31.01.2016/developer/sh_refs_qiime_ver7_97_s_31.01.2016_dev.fasta -o all_sample_all_seqs_open_UNITE_tax_dev
+
+#UNITE output
+make_otu_table.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/All_seqs_all_samples_open_picked_otus_both_db/final_otu_map_mc2.txt -t /Users/vanbaellab/Documents/S2_FinalAnalysis/all_sample_all_seqs_open_UNITE_tax_dev/rep_set_tax_assignments.txt -o open_ref_UNITE_otu_table.biom
+
+#UNITE output
+make_otu_table.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/All_seqs_all_samples_open_picked_otus_both_db/final_otu_map_mc2.txt -t /Users/vanbaellab/Documents/S2_FinalAnalysis/all_sample_all_seqs_open_UNITE_tax_dev/rep_set_tax_assignments.txt -o open_ref_UNITE_otu_table.biom
+
+filter_otus_from_otu_table.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/open_ref_UNITE_otu_table.biom -o /Users/vanbaellab/Documents/S2_FinalAnalysis/open_ref_UNITE_otu_table.biom -e /Users/vanbaellab/Documents/S2_FinalAnalysis/alignment_all_samples_all_seqs/rep_set_failures.fasta —negate_ids_to_exclude
+
+#filter out “unassigned” from UNITE table
+filter_taxa_from_otu_table.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/open_ref_UNITE_otu_table.biom -o open_ref_UNITE_otu_table_no_unassigned.biom -n Unassigned
+
+#make table of only UNITE unassigned
+filter_taxa_from_otu_table.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/open_ref_UNITE_otu_table.biom -o open_ref_UNITE_otu_table_only_unassigned.biom -p Unassigned
+
+-------------------------------UNITE chimera and low abundance filtering
+
+#filter out every OTU with fewer seqs than 0.005% of total sequences for ITS
+
+filter_otus_from_otu_table.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/open_ref_UNITE_otu_table_no_unassigned.biom -o ITS_final_OTU_table.biom —min_count_fraction 0.00005
+
+#ITS
+filter_otus_from_otu_table.py -i ITS_final_OTU_table.biom -o ITS_final_OTU_table_100.biom -n 100
+
+#because so many chimeras were found for GG I’m going to do ITS too using VSEARCH, which is an open source version of USEARCH which seems to work well.
+
+#Filter UNITE for chimeras using chimera ref database.  Use VSEARCH to filter for chimeras in ITS.  Used UNITE version 7 of UCHIME ref dataset (released 16-01-01, downloaded 7/20/16)
+
+#UNITE no Unassigned
+
+Num samples: 194
+Num observations: 953
+Total count: 2325975
+Table density (fraction of non-zero values): 0.119
+
+Counts/sample summary:
+ Min: 0.0
+ Max: 129600.0
+ Median: 5508.000
+ Mean: 11989.562
+ Std. dev.: 16524.246
+ Sample Metadata Categories: None provided
+ Observation Metadata Categories: taxonomy
+
+vsearch —uchime_ref /Users/vanbaellab/Documents/S2_FinalAnalysis/filtered_by_GG_alignment_failures_all_samples_all_seqs.fna -db /Users/vanbaellab/Documents/uchime_reference_dataset_01.01.2016/uchime_reference_dataset_01.01.2016.fasta -chimeras ITS_chimeras.fna -strand plus
+
+#output: Found 38523 (0.1%) chimeras, 34086724 (99.8%) non-chimeras,
+and 20013 (0.1%) borderline sequences in 34145260 unique sequences.
+Taking abundance information into account, this corresponds to
+38523 (0.1%) chimeras, 34086724 (99.8%) non-chimeras,
+and 20013 (0.1%) borderline sequences in 34145260 total sequences.
+MacQIIME eeb-globus:vsearch-1.11.1 $ 
+
+filter_otus_from_otu_table.py -i /Users/vanbaellab/Documents/S2_FinalAnalysis/Final_OTU_tables/ITS_final_OTU_table.biom -o /Users/vanbaellab/Documents/S2_FinalAnalysis/Final_OTU_tables/ITS_final_OTU_table_no_chimeras.biom -e /Users/vanbaellab/Documents/S2_FinalAnalysis/ITS_chimeras.fna
+
+#summary comparison
+
+#ITS no chimeras
+Num samples: 194
+Num observations: 526
+Total count: 2312226
+Table density (fraction of non-zero values): 0.183
+
+#ITS with Chimeras
+Num samples: 194
+Num observations: 526
+Total count: 2312226
+Table density (fraction of non-zero values): 0.183
