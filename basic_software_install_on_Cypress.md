@@ -1,9 +1,9 @@
-###How to locally install a program on Cypress (Tulane HPC)
+### How to locally install a program on Cypress (Tulane HPC)
 Last updated: 26 Nov 2018
 
 Note: This is an example using the program "mothur".  This might not work for all programs, but should work for many.  In essence you are downloading the software to your directory on Cypress and adding a line to your bash profile (these are directions that Cypress reads when you first log in.  It is how you customize your "space" on the HPC) so that you can call the program and it's functions without having to type out the full path.
 
-####Installation Instructions [https://www.mothur.org/wiki/Installation](https://www.mothur.org/wiki/Installation "https://www.mothur.org/wiki/Installation")
+#### Installation Instructions [https://www.mothur.org/wiki/Installation](https://www.mothur.org/wiki/Installation "https://www.mothur.org/wiki/Installation")
 1. Make a folder for the software in the location you want.  I like to keep all my software in one place so it's easy to find and remove if I don't need it.
 
 	```
