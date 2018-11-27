@@ -1,3 +1,5 @@
+#DO NOT USE UNTIL STEVE FIXES AND CLEANS.
+
 #!/bin/bash
 
 #SBATCH --job-name=BLAST_cultures
@@ -9,7 +11,7 @@
 #SBATCH --mem=64000
 #SBATCH --mail-type=ALL
 
-##make directory and download and unzip files
+#Script to BLAST sequences locally on Cypress (Tulane HPC) as opposed to over the internet or through Geneious.
 
 ##taken from: https://github.com/Joseph7e/Assign-Taxonomy-with-BLAST & https://www.linuxquestions.org/questions/linux-newbie-8/how-to-untar-all-tar-files-in-a-directory-98963/
 

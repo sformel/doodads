@@ -1,3 +1,5 @@
+#DO NOT USE UNTIL STEVE FIXES AND CLEANS.
+
 #!/bin/bash
 
 NAMES="names.dmp"
