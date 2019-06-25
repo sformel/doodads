@@ -1,0 +1,124 @@
+1. Concatenate your fasta files:
+	Make sure they are all facing the same direction (i.e. 5' to 3' or 3' to 5')
+	Make sure they are all linearized (QIIME2 has problems with that "wrapped" format of fasta)
+	Don't mix fungi and bacteria, make two separate files
+	Make sure they are all unix formatted, not Microsoft/DOS.  I had problems with the ^M character in my outputs from Sequencher.
+	
+I have code for all the above if you have trouble with any of it.  But it's kinda messy, so I would need to dig it out.  Still let me know if you need help.
+
+#####################
+
+2. In QIIME2 (I was using version 2018.2):
+
+	a. Dereplicate sequences
+	
+		vsearch --derep_fulllength ./S246_BF_ready_linear.fasta --output S246_BF_ready_linear_derep.fasta --sizeout -fasta_width 0 --uc BF_derep_map.txt
+
+	b. Import seqs into qiime
+
+		qiime tools import --input-path ./seqs/BF/S246_BF_ready_linear_derep.fasta --output-path ./seqs_ready_for_tax_class/S246_BF_ready_linear_derep.qza --type 'FeatureData[Sequence]'
+		
+	c. Classify taxonomy (Bacteria 16S)
+
+		download pre-trained SILVA132 classifier 
+
+		from [https://forum.qiime2.org/t/silva-132-classifiers/3698](https://forum.qiime2.org/t/silva-132-classifiers/3698 "https://forum.qiime2.org/t/silva-132-classifiers/3698")
+
+		*Note: according to above link, classifiers were trained with scikit-learn 0.19.1 by Greg Caporaso, one of the Qiime2 developers.
+	
+		wget https://www.dropbox.com/s/5tckx2vhrmf3flp/silva-132-99-nb-classifier.qza?dl=0
+	
+	correct filename
+	
+		mv silva-132-99-nb-classifier.qza\?dl\=0 silva-132-99-nb-classifier.qza 
+	
+	d. Run script to classify
+	
+		#!/bin/bash
+
+		#SBATCH --job-name=S246_BF
+		#SBATCH --output=./job_reports/S246_BF.output 
+		#SBATCH --error=./job_reports/S246_BF.error 
+		#SBATCH --qos=normal 
+		#SBATCH --time=0-24:00:00 
+		#SBATCH --nodes=1 
+		#SBATCH --mem=64000 
+		#SBATCH --mail-type=ALL 
+		#SBATCH --mail-user=sformel@tulane.edu
+
+		module load qiime2/2018.2 
+
+		qiime feature-classifier classify-sklearn --i-classifier ./db/silva-132-99-nb-classifier.qza  --i-reads ./seqs_ready_for_tax_class/S246_BF_ready_linear_derep.qza --o-classification ./classified/S246_BF_classified.qza --p-read-orientation same
+		
+		
+################ If classifying fungi, use:
+
+	Follow the below notes and change the confidence parameter (--p-confidence) to 0.9 (it should be 0.7 for 16S as a default)
+
+#######UNITE fungal classification
+1. download UNITE pre-trained classifier [https://forum.qiime2.org/t/unite-ver-7-2-2017-12-01-classifiers-for-qiime2-ver-2017-12-available-here/3020](https://forum.qiime2.org/t/unite-ver-7-2-2017-12-01-classifiers-for-qiime2-ver-2017-12-available-here/3020 "https://forum.qiime2.org/t/unite-ver-7-2-2017-12-01-classifiers-for-qiime2-ver-2017-12-available-here/3020")
+2. For UNITE, use dynamic classifier as recommended by Qiime2
+3. Classified by Sydney Morgan.  Some pertinent information:
+
+	1. There are two classifiers available. One uses a 99% threshold for clustering and the other is ‘dynamic,’ meaning it uses either a 97% or 99% threshold (or somewhere in between) based on which is more accurate for certain lineages of fungi (as determined manually by experts in the field).
+
+	2. The version of UNITE I used is the most current (version 7.2, release date 2017-12-01). I retrieved it from the following site: https://doi.org/10.15156/BIO/587481 26
+
+	3. I used the most current version of QIIME2 to create the classifiers (2017.12), and I followed a protocol posted previously on GitHub, just updating the source files: https://github.com/gregcaporaso/2017.06.23-q2-fungal-tutorial 46
+
+	4. The classifiers were created without a “feature-classifier extract-reads” command so they should work well for any primer sets. According to @Nicholas_Bokulich, with fungal ITS data we see a performance decrease when the feature classifier is trained on extracted sequence reads. See this post for more info: https://forum.qiime2.org/t/memoryerror-when-training-unite-ver7-01-12-2017-classifier/2757/2
+
+
+######################  Organizing output in Excel
+
+There's probably a better way of doing this, but at the time, this is what I came up with:
+
+##organizing output
+
+The output of the qiime2 process is a qza file.  It can be unzipped using the unzip command. The unzipped folder will be named by some hash code.  Inside it will be another folder called data.   Inside data there is a file called "taxonomy.tsv" that can be opened in excel.  After unzipping all the outputs, I renamed the folders and the taxonomy files to make sense.		
+
+
+###filling out the taxonomy excel spreadsheet
+
+#####add dereplicate data and metadata from original project spreadsheets
+
+I opened the files that vsearch output during dereplication.  They are:
+
+BH_27F_derep_map.txt
+BH_1492R_derep_map.txt
+FH_ITS5_derep_map.txt
+FH_LR3_derep_map.txt
+BF_derep_map.txt
+FF_derep_map.txt
+
+They show the sequence id that was given as a representative for the dereplicated group, and all the sequences that match as 100% hits below that.
+
+This explains the file format and annotation: [https://www.drive5.com/usearch/manual6/ucout.html](https://www.drive5.com/usearch/manual6/ucout.html "https://www.drive5.com/usearch/manual6/ucout.html")
+
+I copid and pasted the IDs of the hits into the taxonomy spreadsheet and than replicated the representative taxonomy to fill out the info for the hits.
+
+Some useful excel tips:
+
+1. [https://ask.metafilter.com/100341/Excel-2007-Filter-one-sheet-based-on-a-range-of-cells-in-another-sheet](https://ask.metafilter.com/100341/Excel-2007-Filter-one-sheet-based-on-a-range-of-cells-in-another-sheet "https://ask.metafilter.com/100341/Excel-2007-Filter-one-sheet-based-on-a-range-of-cells-in-another-sheet")
+2. Here is how to insert multiple rows in excel: [https://www.ablebits.com/office-addins-blog/2014/06/13/excel-insert-row-shortcut/](https://www.ablebits.com/office-addins-blog/2014/06/13/excel-insert-row-shortcut/ "https://www.ablebits.com/office-addins-blog/2014/06/13/excel-insert-row-shortcut/")
+3. [https://www.ablebits.com/office-addins-blog/2014/05/02/fill-blanks-excel/](https://www.ablebits.com/office-addins-blog/2014/05/02/fill-blanks-excel/ "https://www.ablebits.com/office-addins-blog/2014/05/02/fill-blanks-excel/")
+
+Then it takes a whole lot of copying pasting and cleaning data to make sure the best hit (from the forward or reverse) is kept and that other metadata is incorporated.
+
+*Note: To get the blank-filling trick to work (referenced above) I had to fill in any blank taxonomic ranks with "unidentified", otherwise it would just continue to fill into the sequence below it.*
+
+#####Used VLOOKUP to fill metadata values from the other catalog
+
+[https://support.office.com/en-us/article/VLOOKUP-function-0bbc8083-26fe-4963-8ab8-93a18ad188a1](https://support.office.com/en-us/article/VLOOKUP-function-0bbc8083-26fe-4963-8ab8-93a18ad188a1 "https://support.office.com/en-us/article/VLOOKUP-function-0bbc8083-26fe-4963-8ab8-93a18ad188a1")
+
+Here is an example of what I used:
+
+=VLOOKUP(K208, 'S4 Collection Info Catalog'!$C$3:$L$800, 8,FALSE)
+
+Here is how it works:
+
+1. K208 is the cell with the value I want the cmoputer to match (my isolate number on my final worksheet)
+2. 'S4 Collection Info Catalog'!$C$3:$L$800 is the array of cells on the sheet 'S4 Collection Info Catalog' (must be in the same workbook, so make a copy if it isn't) that I want to match and pull values from.
+3. 8 is the 8th column of the array I defined earlier.  So I'm telling excel that if any cell in the array matches K208 then fill the cell that I'm writing the formula in, with the value from the 8th column of that row.
+4. FALSE means the search must return an exact match.
+5. after entering this formula I drag it down to fill the rest of the column.  After that, copy and paste them as values in place, so they will never change.
