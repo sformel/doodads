@@ -1,6 +1,9 @@
 //Macro for ImageJ
 
+//We use this in the van ball lab to measure total leaf length in grass samples.
+
 //This will sum the length of all lines selected in the  results window after being measured by the ROI manager.  
+
 //Really written by someone named Kees here:
 //http://imagej.1557.x6.nabble.com/summing-columns-in-ROI-manager-td5005867.html
 

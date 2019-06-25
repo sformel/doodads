@@ -1,4 +1,7 @@
-#### To batch rename files:
+#### To batch rename files
+
+By Steve Formel
+
 Last updated: 26 Nov 2018
 
 In general if you know how to use regular expressions (regex), this will be easier to do.  But it's not totally necessary, here are some options: 
@@ -20,3 +23,4 @@ rename string_you_want_to_replace replacement_string *myfiles.whatever
 
 1. Another option is the Bulk Rename Utility software, which is point and click, but still works best if you have knowledge of regular expressions. 
 [https://www.bulkrenameutility.co.uk/Download.php](https://www.bulkrenameutility.co.uk/Download.php "https://www.bulkrenameutility.co.uk/Download.php")
+

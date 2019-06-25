@@ -20,8 +20,6 @@
 
 #https://stackoverflow.com/questions/36754891/ggplot2-adding-secondary-y-axis-on-top-of-a-plot/36759348#36759348
 
-#http://stackoverflow.com/questions/36754891/ggplot2-adding-secondary-y-axis-on-top-of-a-plot/36759348#36759348
-
 
 #load libraries------
 library(pls) #version 2.7.1
